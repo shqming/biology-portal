@@ -1,0 +1,42 @@
+.clearfix {
+
+  &:before,
+  &:after {
+    display: table; // 2
+    content: " "; // 1
+  }
+
+  &:after {
+    clear: both;
+  }
+}
+
+// 阴影
+.shadow {
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+}
+
+// 滚动条样式
+::-webkit-scrollbar-thumb {
+  background-color: rgba(151, 168, 190, .3);
+  border-radius: 10px;
+  transition: background-color .3s;
+  transition-delay: 0s;
+  transition-duration: .3s;
+  transition-timing-function: ease;
+}
+  
+::-webkit-scrollbar-thumb:hover {
+  cursor: pointer;
+  background: rgba(151,168,190,.5);
+}
+  
+::-webkit-scrollbar {
+  width: 8px;
+  height: 10px;
+}
+
+
+html, body, #app {
+  height: 100%;
+}
