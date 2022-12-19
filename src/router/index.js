@@ -3,11 +3,16 @@ import VueRouter from 'vue-router';
 
 const Layout = () => import('@/components/layout.vue');
 const Home = () => import('@/views/Home.vue');
-const Gene = () => import('@/views/gene.vue');
+const Gene = () => import('@/views/gene/gene.vue');
+const Genome = () => import('@/views/genome/index.vue');
 const Nofind404 = () => import('@/views/error-page/404.vue');
 const Developing = () => import('@/views/error-page/developing.vue');
 const Team = () => import('@/views/team.vue');
 const OnlineUse = () => import('@/views/onlineUse.vue');
+const Variation = () => import('@/views/variation.vue');
+const Download = () => import('@/views/download.vue');
+const Help = () => import('@/views/help.vue');
+const MolecularMarker = () => import('@/views/molecularMarker.vue');
 
 Vue.use(VueRouter);
 
@@ -32,6 +37,21 @@ const routes = [
         component: Gene,
       },
       {
+        path: 'gene/:id',
+        name: 'GeneDetail',
+        component: Developing,
+      },
+      {
+        path: 'genome',
+        name: 'Genome',
+        component: Genome,
+      },
+      {
+        path: 'variation',
+        name: 'Variation',
+        component: Variation,
+      },
+      {
         path: 'onlineUse',
         name: 'OnlineUse',
         component: OnlineUse,
@@ -39,7 +59,12 @@ const routes = [
       {
         path: 'download',
         name: 'Download',
-        component: Nofind404,
+        component: Download,
+      },
+      {
+        path: 'molecularMarker',
+        name: 'MolecularMarker',
+        component: MolecularMarker,
       },
       {
         path: 'team',
@@ -49,7 +74,7 @@ const routes = [
       {
         path: 'help',
         name: 'Help',
-        component: Developing,
+        component: Help,
       },
       {
         path: '*',

@@ -21,6 +21,7 @@ module.exports = {
     'max-len': ['warn', 100],
     'no-plusplus': 'off',
     'no-mixed-operators': 'off',
-    "global-require": 0
+    "global-require": 'off',
+    'import/no-unresolved': 'off',
   },
 };

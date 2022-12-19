@@ -18,7 +18,7 @@
       <el-menu-item index="/home">首页</el-menu-item>
       <el-submenu index="genome">
         <template slot="title">基因组</template>
-        <el-menu-item index="/home/genome-1">选项1</el-menu-item>
+        <el-menu-item index="/home/genome">大黄鱼</el-menu-item>
         <el-menu-item index="/home/genome-2">选项2</el-menu-item>
         <el-menu-item index="/home/genome-3">选项3</el-menu-item>
         <el-menu-item index="/home/genome-4">选项3</el-menu-item>
@@ -34,6 +34,7 @@
         <el-menu-item index="/home/tools-5">选项5</el-menu-item>
         <el-menu-item index="/home/tools-6">选项6</el-menu-item>
       </el-submenu>
+      <el-menu-item index="/home/molecularMarker">分子标记</el-menu-item>
       <el-menu-item index="/home/download">下载</el-menu-item>
       <el-menu-item index="/home/team">团队</el-menu-item>
       <el-menu-item index="/home/help">帮助</el-menu-item>
@@ -55,6 +56,7 @@ export default {
   watch: {
     $route(to) {
       this.activeIndex = to.path;
+      if (to.path.indexOf('/gene/')) this.activeIndex = '/home/gene';
     },
   },
   methods: {

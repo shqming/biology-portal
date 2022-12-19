@@ -2,10 +2,21 @@
   <div class="home">
     <el-carousel>
       <el-carousel-item v-for="src in imgs" :key="src">
-        <el-image :src="src" fit="fill"></el-image>
+        <el-image :src="src" fill="cover"></el-image>
       </el-carousel-item>
     </el-carousel>
     <div class="search-wrap">
+      <el-select
+        v-model="select"
+        placeholder="请选择"
+      >
+        <el-option
+          v-for="item in selection"
+          :key="item"
+          :label="item"
+          :value="item"
+        ></el-option>
+      </el-select>
       <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
         <el-button slot="append" icon="el-icon-search">搜索</el-button>
       </el-input>
@@ -40,12 +51,15 @@ export default {
         'https://cdn.pixabay.com/photo/2015/03/21/10/26/environmental-protection-683437_1280.jpg',
         'https://cdn.pixabay.com/photo/2018/09/06/18/49/bacteria-3658992_1280.jpg',
       ],
+      select: '',
       input3: '',
+      selection: ['选项1', '选项2', '选项3'],
     };
   },
   components: {
   },
   mounted() {},
+
   methods: {
   },
 };
@@ -54,7 +68,7 @@ export default {
 .home {
   ::v-deep .el-carousel {
     margin-top: 2px;
-    height: 550px;
+    height: 300px;
 
     .el-carousel__container {
       height: 100%;
@@ -72,6 +86,10 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    .el-select {
+      margin-right: 24px;
+    }
 
     .el-input {
       width: 50%;
