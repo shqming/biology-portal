@@ -10,7 +10,7 @@
         <el-table
           :data="tableData"
           height="500"
-          header-cell-style="background-color: #f8f8f9;"
+          :header-cell-style="{ 'background-color': '#f8f8f9' }"
         >
           <el-table-column
             prop="Species"

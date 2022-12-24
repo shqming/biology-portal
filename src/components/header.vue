@@ -18,18 +18,19 @@
       <el-menu-item index="/home">首页</el-menu-item>
       <el-submenu index="genome">
         <template slot="title">基因组</template>
-        <el-menu-item index="/home/genome">大黄鱼</el-menu-item>
-        <el-menu-item index="/home/genome-2">选项2</el-menu-item>
-        <el-menu-item index="/home/genome-3">选项3</el-menu-item>
-        <el-menu-item index="/home/genome-4">选项3</el-menu-item>
+        <el-menu-item
+          v-for="item in genome"
+          :key="item.gnome_version_id"
+          :index="`/home/genome/${item.gnome_version_id}`"
+        >{{ item.gnome_species_name }}</el-menu-item>
       </el-submenu>
       <el-menu-item index="/home/gene">基因</el-menu-item>
       <el-menu-item index="/home/variation">变异</el-menu-item>
       <el-submenu index="tools">
         <template slot="title">工具</template>
+        <el-menu-item index="" @click="open('http://124.71.211.200/index.html')">基因浏览器</el-menu-item>
         <el-menu-item index="/home/onlineUse">在线使用</el-menu-item>
-        <el-menu-item index="/home/tools-2">选项2</el-menu-item>
-        <el-menu-item index="/home/tools-3">选项3</el-menu-item>
+        <el-menu-item index="" @click="open('http://124.71.211.200:4567/')">序列比对</el-menu-item>
         <el-menu-item index="/home/tools-4">选项4</el-menu-item>
         <el-menu-item index="/home/tools-5">选项5</el-menu-item>
         <el-menu-item index="/home/tools-6">选项6</el-menu-item>
@@ -43,23 +44,36 @@
 </template>
 
 <script>
+import GenomeApi from '@/api/genome';
 
 export default {
   name: '',
   data() {
     return {
       activeIndex: '/home',
+      genome: [],
     };
   },
   components: {},
-  mounted() {},
+  mounted() {
+    this.getGenome();
+  },
   watch: {
-    $route(to) {
-      this.activeIndex = to.path;
-      if (to.path.indexOf('/gene/')) this.activeIndex = '/home/gene';
-    },
+    // $route(to) {
+    //   console.log('开始');
+    //   this.activeIndex = to.path;
+    //   if (to.path.indexOf('/gene/')) this.activeIndex = '/home/gene';
+    // },
   },
   methods: {
+    getGenome() {
+      GenomeApi.list().then((res) => {
+        this.genome = res.data.data;
+      });
+    },
+    open(item) {
+      window.open(item);
+    },
   },
 };
 </script>

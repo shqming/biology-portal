@@ -12,6 +12,7 @@ module.exports = {
   },
   globals: {
     require: true,
+    process: true,
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -23,5 +24,6 @@ module.exports = {
     'no-mixed-operators': 'off',
     "global-require": 'off',
     'import/no-unresolved': 'off',
+    'import/prefer-default-export': 'off',
   },
 };

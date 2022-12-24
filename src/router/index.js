@@ -3,7 +3,8 @@ import VueRouter from 'vue-router';
 
 const Layout = () => import('@/components/layout.vue');
 const Home = () => import('@/views/Home.vue');
-const Gene = () => import('@/views/gene/gene.vue');
+const Gene = () => import('@/views/gene/index.vue');
+const GeneDetail = () => import('@/views/gene/detail.vue');
 const Genome = () => import('@/views/genome/index.vue');
 const Nofind404 = () => import('@/views/error-page/404.vue');
 const Developing = () => import('@/views/error-page/developing.vue');
@@ -39,10 +40,10 @@ const routes = [
       {
         path: 'gene/:id',
         name: 'GeneDetail',
-        component: Developing,
+        component: GeneDetail,
       },
       {
-        path: 'genome',
+        path: 'genome/:id',
         name: 'Genome',
         component: Genome,
       },

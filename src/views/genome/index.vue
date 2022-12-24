@@ -1,26 +1,24 @@
 <template>
   <div class="genome">
     <div class="about">
-      <h3>关于大黄鱼</h3>
+      <h3>关于{{ data.gnome_name }}</h3>
       <div>
         <el-image
-          :src="imgSrc"
+          :src="data.gnome_pic_url"
           class="about-image"
         ></el-image>
         <p class="subscribe">
-          Large yellow croaker (Larimichthys crocea (Richardson, 1846)) is a temperate-water migratory fish that is mainly distributed in the coastal areas of East China and Southeast
-          Chaa it is ona of the most econom cally Insoortant marine fish io China wath an annual cultured yleld that exceeds any other net-cage-farmed marine fish species. With the recent rapid development of the culture industry, a series of problems, including lower growth rate, poor disease resistance, and lower viability, have been emerging in the cultured large yellow croaker. Therefore, genetic improvement for important economic traits has been considered a potentially effective means to overcome these problems addition, large yellow croaker is especially sensitive to air exposure and hypoxia. This makes the large yellow croaker's case suitable for investigating response mechanisms to environmental stress. Large yellow croaker (Larimichthys crocea (Richardson, 1846)) is a temperate-water migratory fish that is mainly distributed in the coastal areas of East
-          China and Southeast China
+          {{ data.description }}
         </p>
       </div>
     </div>
     <el-divider />
     <div class="summary">
-      <h3>大黄鱼基因组汇总统计</h3>
+      <h3>{{ data.gnome_name }}基因组汇总统计</h3>
       <el-descriptions class="margin-top"
         :column="1"
         border
-        labelStyle="width: 370px"
+        :labelStyle="{ width: '370px' }"
       >
         <el-descriptions-item label="参考序列">
           GCA_000003025.6(Sscrofa11.1)
@@ -29,10 +27,10 @@
           科学与技术中心
         </el-descriptions-item>
         <el-descriptions-item label="基因组大小">
-          2.5Gb
+          {{ data.gnome_size }} 字节
         </el-descriptions-item>
-        <el-descriptions-item label="基因">
-          31908
+        <el-descriptions-item label="基因编号">
+          {{ data.gnome_gene_num }}
         </el-descriptions-item>
         <el-descriptions-item label="染色体数目">
           20
@@ -41,7 +39,7 @@
           705
         </el-descriptions-item>
         <el-descriptions-item label="重叠群N50">
-          48.2 兆字节
+          {{ data.gnome_contig_N50 }} 字节
         </el-descriptions-item>
         <el-descriptions-item label="脚手架N50">
           88.2 兆字节
@@ -66,6 +64,8 @@
 </template>
 
 <script>
+import GenomeApi from '@/api/genome';
+
 export default {
   name: '',
 
@@ -77,16 +77,31 @@ export default {
     return {
       reference: ['Warr A', 'Affara N', 'Aken B', 'et al.', 'Thousand Genomes Project', '2020', '9(6): giaa051'],
       imgSrc: require('@/assets/images/yu2.jpg'),
+      data: {},
     };
   },
 
   computed: {},
 
-  watch: {},
+  watch: {
+    $route: {
+      handler() {
+        this.getDetail();
+      },
+      immediate: true,
+    },
+  },
 
   mounted() {},
 
-  methods: {},
+  methods: {
+    getDetail() {
+      const { id } = this.$route.params;
+      GenomeApi.genomeDetail(id).then((res) => {
+        this.data = res.data.data;
+      });
+    },
+  },
 };
 </script>
 

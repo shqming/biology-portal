@@ -26,7 +26,7 @@
         <el-table
           :data="tableData"
           height="700"
-          header-cell-style="background-color: #f8f8f9;"
+          :header-cell-style="{ 'background-color': '#f8f8f9' }"
         >
           <el-table-column
             type="selection"
