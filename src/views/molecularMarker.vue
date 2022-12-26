@@ -2,30 +2,36 @@
   <div class="marker">
     <div class="wrap shadow">
       <div class="search-wrap">
-        <el-input placeholder="请输入内容" size="medium" v-model="input3" class="input-with-select">
-          <el-button slot="append" icon="el-icon-search">搜索</el-button>
-        </el-input>
-        <el-select v-model="value1" size="medium" placeholder="请选择">
+        <span>基因组： </span>
+        <el-select v-model="genomeid" filterable size="medium" placeholder="请选择">
           <el-option
-            v-for="item in options1"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="item in genomeList"
+            :key="item.gnome_version_id"
+            :label="item.gnome_species_name"
+            :value="item.gnome_version_id">
           </el-option>
         </el-select>
-        <el-select v-model="value2" size="medium" placeholder="请选择">
+        <span>标记类型： </span>
+        <el-select v-model="typeID" filterable clearable size="medium" placeholder="请选择">
           <el-option
-            v-for="item in options2"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="item in typeList"
+            :key="item.maker_type_id"
+            :label="item.maker_type_name"
+            :value="item.maker_type_id">
           </el-option>
         </el-select>
+        <el-button
+          type="primary"
+          size="medium"
+          @click="getPageList"
+          icon="el-icon-search"
+        >搜索</el-button>
       </div>
       <div class="table">
         <el-table
           :data="tableData"
           height="700"
+          v-loading="tableLoading"
           :header-cell-style="{ 'background-color': '#f8f8f9' }"
         >
           <el-table-column
@@ -33,43 +39,68 @@
             width="55">
           </el-table-column>
           <el-table-column
-            prop="Species"
-            label="Species"
+            prop="maker_id"
+            label="makerId"
           >
             <template slot-scope="{ row }">
-              <el-button @click="download" type="text" style="color: #9B58FE">
-                {{ row.Species }}
-              </el-button>
+              <span style="color: #9B58FE">
+                {{ row.maker_id }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column
-            prop="Chromosome"
-            label="Chromosome"
+            prop="gnome_version_id"
+            label="gnomeVersionId"
           >
           </el-table-column>
           <el-table-column
-            prop="Position"
-            label="Position"
+            prop="maker_type_id"
+            label="makerTypeId"
           >
             <template slot-scope="{ row }">
-              <el-button @click="download" type="text" style="color: #9B58FE">
-                {{ row.Position }}
-              </el-button>
+              <span style="color: #9B58FE">
+                {{ row.maker_type_id }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column
-            prop="SequenceDownload"
-            label="SequenceDownload"
+            prop="gnome_chr_id"
+            label="gnomeChrId"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="start"
+            label="start"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="end"
+            label="end"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="description"
+            label="description"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="seq_url"
+            label="seqUrl"
+            show-overflow-tooltip
           >
           </el-table-column>
         </el-table>
         <el-pagination
           background
-          :current-page="currentPage4"
-          :page-sizes="[10, 25, 50]"
-          :page-size="10"
+          :current-page="pageInfo.pageNum"
+          :page-sizes="[10]"
+          :page-size="pageInfo.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="30">
+          :total="pageInfo.total"
+          @current-change="handleCurrentChange"
+          @prev-click="handleCurrentChange"
+          @next-click="handleCurrentChange"
+        >
         </el-pagination>
       </div>
     </div>
@@ -77,8 +108,11 @@
 </template>
 
 <script>
+import MolecularMarkerApi from '@/api/molecularMarker';
+import GenomeApi from '@/api/genome';
+
 export default {
-  name: '',
+  name: 'MolecularMarker',
 
   props: {},
 
@@ -86,52 +120,68 @@ export default {
 
   data() {
     return {
-      input3: '',
-      value1: '',
-      options1: [{
-        value: '大黄鱼',
-        label: '大黄鱼',
-      }, {
-        value: '大黄鱼2',
-        label: '大黄鱼2',
-      }, {
-        value: '大黄鱼3',
-        label: '大黄鱼3',
-      }],
-      value2: '',
-      options2: [{
-        value: '所有',
-        label: '所有',
-      }, {
-        value: '特定种类',
-        label: '特定种类',
-      }, {
-        value: '特定基因',
-        label: '特定基因',
-      }],
       tableData: [],
-      currentPage4: 1,
+      tableLoading: false,
+      pageInfo: {
+        total: 0,
+        pageSize: 10,
+        pageNum: 1,
+      },
+      genomeid: 2022021721004,
+      genomeList: [],
+      typeID: '',
+      typeList: [],
     };
   },
 
   computed: {},
 
-  watch: {},
+  watch: {
+    genomeid: {
+      handler(newValue) {
+        this.getTypeList(newValue);
+      },
+      immediate: true,
+    },
+  },
 
   mounted() {
-    for (let i = 0; i < 20; i++) {
-      this.tableData.push({
-        Species: 'ENSSSCG00000000002',
-        Chromosome: 'KEGG',
-        Position: 'IPR026657',
-        SequenceDownload: 'G-2 and S-phase expressed protein 1',
-      });
-    }
+    this.getGenome();
+    this.getPageList();
   },
 
   methods: {
-    download() {
-      window.open('https://www.baidu.com');
+    // 获取基因组列表
+    getGenome() {
+      GenomeApi.list().then((res) => {
+        this.genomeList = res.data.data;
+      });
+    },
+    // 根据基因组id获取分子标记类型列表
+    getTypeList(genomeId) {
+      MolecularMarkerApi.getTypeList(genomeId).then((res) => {
+        this.typeList = res.data.data;
+      });
+    },
+    // 获取pageList
+    getPageList() {
+      this.tableLoading = true;
+      const params = {
+        genomeVersionID: this.genomeid,
+        typeID: this.typeID,
+        page: this.pageInfo.pageNum,
+      };
+      MolecularMarkerApi.getPageList(params).then((res) => {
+        const { data } = res.data;
+        this.tableData = data.GenomeSvInfos;
+        this.pageInfo.total = data.Total;
+        this.tableLoading = false;
+      });
+    },
+    // 当前页改变时
+    handleCurrentChange(val) {
+      this.pageInfo.pageNum = val;
+      this.getPageList();
     },
   },
 };
@@ -146,6 +196,7 @@ export default {
   .search-wrap {
     display: flex;
     justify-content: center;
+    align-items: center;
 
     .el-input {
       width: 500px;

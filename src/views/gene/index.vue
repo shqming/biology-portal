@@ -2,74 +2,79 @@
   <div class="marker">
     <div class="wrap shadow">
       <div class="search-wrap">
-        <el-input placeholder="请输入内容" size="medium" v-model="input3" class="input-with-select">
-          <el-button slot="append" icon="el-icon-search">搜索</el-button>
+        <span>基因组： </span>
+        <el-select v-model="genomeID" filterable clearable size="medium" placeholder="请选择">
+          <el-option
+            v-for="item in genomeList"
+            :key="item.gnome_version_id"
+            :label="item.gnome_species_name"
+            :value="item.gnome_version_id">
+          </el-option>
+        </el-select>
+        <el-input placeholder="请输入基因名" size="medium" v-model="geneName" class="input-with-select">
+          <el-button slot="append" icon="el-icon-search" @click="getPageList">搜索</el-button>
         </el-input>
-        <el-select v-model="value1" size="medium" placeholder="请选择">
-          <el-option
-            v-for="item in options1"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-        <el-select v-model="value2" size="medium" placeholder="请选择">
-          <el-option
-            v-for="item in options2"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
       </div>
       <div class="table">
         <el-table
           :data="tableData"
           height="700"
+          v-loading="tableLoading"
+          row-key="id"
+          :tree-props="{children: 'GeneWithGnome'}"
           :header-cell-style="{ 'background-color': '#f8f8f9' }"
         >
           <el-table-column
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            prop="GeneID"
-            label="GeneID"
-          >
-            <template slot-scope="{ row }">
-              <el-button @click="jump(row.GeneID)" type="text" style="color: #9B58FE">
-                {{ row.GeneID }}
-              </el-button>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="DatabaseType"
-            label="DatabaseType"
+            prop="GeneName"
+            label="GeneName"
           >
           </el-table-column>
           <el-table-column
-            prop="AnnotationID"
-            label="AnnotationID"
+            prop="GeneAllName"
+            label="GeneAllName"
           >
-            <template slot-scope="{ row }">
-              <el-button @click="jump(row.GeneID)" type="text" style="color: #9B58FE">
-                {{ row.AnnotationID }}
-              </el-button>
-            </template>
           </el-table-column>
           <el-table-column
-            prop="Annotation"
-            label="Annotation"
+            label="GeneWithGnome"
           >
+            <el-table-column
+              prop="gnome_gene_id"
+              label="GnomeGeneId"
+            >
+              <template slot-scope="{ row }">
+                <el-button @click="jump(row)" type="text" style="color: #9B58FE">
+                  {{ row.gnome_gene_id }}
+                </el-button>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="gene_id"
+              label="GeneId"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="gnome_version_id"
+              label="GnomeVersionId"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="gnome_chr_id"
+              label="GnomeChrId"
+            >
+            </el-table-column>
           </el-table-column>
         </el-table>
         <el-pagination
           background
-          :current-page="currentPage4"
-          :page-sizes="[10, 25, 50]"
-          :page-size="10"
+          :current-page="pageInfo.pageNum"
+          :page-sizes="[10]"
+          :page-size="pageInfo.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="30">
+          :total="pageInfo.total"
+          @current-change="handleCurrentChange"
+          @prev-click="handleCurrentChange"
+          @next-click="handleCurrentChange"
+        >
         </el-pagination>
       </div>
     </div>
@@ -77,6 +82,11 @@
 </template>
 
 <script>
+import GenomeApi from '@/api/genome';
+import GeneApi from '@/api/gene';
+
+const shortid = require('shortid');
+
 export default {
   name: '',
 
@@ -86,31 +96,16 @@ export default {
 
   data() {
     return {
-      input3: '',
-      value1: '',
-      options1: [{
-        value: '大黄鱼',
-        label: '大黄鱼',
-      }, {
-        value: '大黄鱼2',
-        label: '大黄鱼2',
-      }, {
-        value: '大黄鱼3',
-        label: '大黄鱼3',
-      }],
-      value2: '',
-      options2: [{
-        value: '所有',
-        label: '所有',
-      }, {
-        value: '特定种类',
-        label: '特定种类',
-      }, {
-        value: '特定基因',
-        label: '特定基因',
-      }],
       tableData: [],
-      currentPage4: 1,
+      tableLoading: false,
+      pageInfo: {
+        total: 0,
+        pageSize: 10,
+        pageNum: 1,
+      },
+      genomeID: 2022021721001,
+      genomeList: [],
+      geneName: '',
     };
   },
 
@@ -119,19 +114,78 @@ export default {
   watch: {},
 
   mounted() {
-    for (let i = 0; i < 20; i++) {
-      this.tableData.push({
-        GeneID: 'ENSSSCG00000000002',
-        DatabaseType: 'KEGG',
-        AnnotationID: 'K10129',
-        Annotation: 'G-2 and S-phase expressed protein 1',
-      });
-    }
+    const { genomeID, geneName } = this.$route.query;
+    this.genomeID = genomeID ? Number(genomeID) : '';
+    this.geneName = geneName || '';
+    this.getGenome();
+    this.getPageList();
   },
 
   methods: {
-    jump(id) {
-      this.$router.push(`gene/${id}`);
+    // 跳转到基因详情
+    jump(row) {
+      this.$router.push({
+        path: 'geneDetail',
+        query: {
+          genomeVersionID: row.gnome_version_id,
+          genomeGeneID: row.gnome_gene_id,
+          geneID: row.gene_id,
+        },
+      });
+    },
+    // 获取pageList
+    async getPageList() {
+      this.tableLoading = true;
+      let res = null;
+      if (this.genomeID === '' && this.geneName === '') {
+        res = await GeneApi.allList({ page: this.pageInfo.pageNum });
+      } else if (this.genomeID && this.geneName) {
+        const params = {
+          genomeVersionID: this.genomeID,
+          geneName: this.geneName,
+          page: this.pageInfo.pageNum,
+        };
+        res = await GeneApi.search(params);
+      } else {
+        this.$message({
+          type: 'error',
+          showClose: true,
+          message: '若选择基因组则必须输入基因名！',
+        });
+      }
+      this.tableLoading = false;
+      if (res?.data?.data?.GeneListOnePage) {
+        const { data } = res.data;
+        this.tableData = this.addRandomId(data.GeneListOnePage);
+        this.pageInfo.total = data.Total;
+      } else {
+        this.tableData = [];
+        this.pageInfo.total = 0;
+        this.pageInfo.pageNum = 1;
+      }
+    },
+    // 获取基因组列表
+    getGenome() {
+      GenomeApi.list().then((res) => {
+        this.genomeList = res.data.data;
+      });
+    },
+    // 当前页改变时
+    handleCurrentChange(val) {
+      this.pageInfo.pageNum = val;
+      this.getPageList();
+    },
+    // 给tableList每一项以及子项添加随机id
+    addRandomId(data) {
+      data.forEach((item) => {
+        item.id = shortid.generate();
+        if (item.GeneWithGnome) {
+          item.GeneWithGnome.forEach((child) => {
+            child.id = shortid.generate();
+          });
+        }
+      });
+      return data;
     },
   },
 };
@@ -146,6 +200,7 @@ export default {
   .search-wrap {
     display: flex;
     justify-content: center;
+    align-items: center;
 
     .el-input {
       width: 500px;

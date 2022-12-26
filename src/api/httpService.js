@@ -4,7 +4,7 @@ import { BASE_URL } from '@/constant/index';
 
 const httpService = axios.create({
   baseURL: BASE_URL,
-  timeout: 15000,
+  timeout: 100000,
   headers: {
     'Content-Type': 'application/json;charset=utf-8',
   },

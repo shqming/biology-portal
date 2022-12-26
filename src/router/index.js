@@ -38,7 +38,7 @@ const routes = [
         component: Gene,
       },
       {
-        path: 'gene/:id',
+        path: 'geneDetail',
         name: 'GeneDetail',
         component: GeneDetail,
       },

@@ -6,6 +6,7 @@
         <el-image
           :src="data.gnome_pic_url"
           class="about-image"
+          :preview-src-list="[data.gnome_pic_url]"
         ></el-image>
         <p class="subscribe">
           {{ data.description }}

@@ -1,302 +1,192 @@
 <template>
   <div class="gene">
-    <div class="gene-wrap">
-      <div class="search shadow">
-        <span class="title">
-          批次信息
-        </span>
-        <div class="content-wrap">
-          <el-table
-            :data="tableData2"
-            style="width: 100%"
-            max-height="460px"
-          >
-            <el-table-column
-              prop="time"
-              label="时间">
-            </el-table-column>
-            <el-table-column
-              prop="address"
-              label="地点">
-            </el-table-column>
-            <el-table-column
-              prop="typeInfo"
-              label="表型信息">
-            </el-table-column>
-            <el-table-column
-              prop="sampleInfo"
-              label="简要信息">
-            </el-table-column>
-            <el-table-column
-              prop="result"
-              label="分析结果">
-            </el-table-column>
-          </el-table>
-        </div>
-      </div>
-      <div class="info shadow">
-        <span class="title">
-          基因信息
-        </span>
-        <div class="content-wrap">
-          <div class="base-info">
-            <div>
-              <span>
-                共用
-                <strong>134</strong>
-                种方法
-              </span>
-            </div>
-            <div>
-              <span>
-                测了
-                <strong>256</strong>
-                种数据
-              </span>
-            </div>
-          </div>
-          <div class="chart-bar">
-            <ChartBar />
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="batch shadow">
       <span class="title">
         SV Search
       </span>
       <div class="content-wrap">
         <div class="search-wrap">
-          <el-input placeholder="请输入内容" size="medium" v-model="input3" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search">搜索</el-button>
-          </el-input>
-          <el-select v-model="value1" size="medium" placeholder="请选择">
+          <span>基因组： </span>
+          <el-select v-model="genome" filterable size="medium" placeholder="请选择">
             <el-option
-              v-for="item in options1"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in genomeList"
+              :key="item.gnome_version_id"
+              :label="item.gnome_species_name"
+              :value="item.gnome_version_id">
             </el-option>
           </el-select>
-          <el-select v-model="value2" size="medium" placeholder="请选择">
-            <el-option
-              v-for="item in options2"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </div>
-          <el-table
-            :data="tableData"
-            max-height="425px"
+          <span>染色体： </span>
+          <el-select
+            v-model="chr"
+            filterable
+            clearable
+            size="medium"
+            @focus="chrList = chrListTemp"
+            placeholder="请选择"
           >
-            <el-table-column
-              prop="genome"
-              label="Genome"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="batchId"
-              label="Batch ID"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="svId"
-              label="SV ID"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="chr"
-              label="Chr"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="pos"
-              label="Pos"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="alt"
-              label="ALT"
-            >
-            </el-table-column>
-          </el-table>
+            <el-option
+              v-for="item in chrList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-input placeholder="请输入起始位置" size="medium" v-model.number="start" onkeyup="value=value.replace(/[^\d]/g,'')"/>
+          <span style="padding: 0 10px">至</span>
+          <el-input placeholder="请输入终止位置" size="medium" v-model.number="end" onkeyup="value=value.replace(/[^\d]/g,'')"/>
+          <el-button
+            type="primary"
+            size="medium"
+            @click="getPageList"
+            icon="el-icon-search"
+          >搜索</el-button>
+        </div>
+        <el-table
+          :data="tableData"
+          height="600px"
+          v-loading="tableLoading"
+        >
+          <el-table-column
+            prop="gnome_sv_id"
+            label="GenomeSvId"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="genome_chr_id"
+            label="GenomeChrId"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="gnome_version_id"
+            label="GenomeVersionId"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="chr_pos"
+            label="ChrPos"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="sv_gene_length"
+            label="SvGeneLength"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="gene_id"
+            label="GeneId"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="src_sv"
+            label="SrcSv"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="alt_sv"
+            label="AltSv"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="sv_type"
+            label="SvType"
+          >
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          background
+          :current-page="pageInfo.pageNum"
+          :page-sizes="[10]"
+          :page-size="pageInfo.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pageInfo.total"
+          @current-change="handleCurrentChange"
+          @prev-click="handleCurrentChange"
+          @next-click="handleCurrentChange"
+        >
+        </el-pagination>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import ChartBar from '@/components/charts/bar.vue';
+import GenomeApi from '@/api/genome';
+import VariationApi from '@/api/variation';
 
 export default {
   name: 'variation',
   components: {
-    ChartBar,
   },
   data() {
     return {
-      tableData: [{
-        genome: 'hg38',
-        batchId: 'batch1',
-        svId: 'sv1',
-        chr: 'chr1',
-        pos: '1000',
-        alt: 'A',
+      tableData: [],
+      tableLoading: false,
+      pageInfo: {
+        total: 0,
+        pageSize: 10,
+        pageNum: 1,
       },
-      {
-        genome: 'hg38',
-        batchId: 'batch1',
-        svId: 'sv1',
-        chr: 'chr1',
-        pos: '1000',
-        alt: 'A',
-      },
-      {
-        genome: 'hg38',
-        batchId: 'batch1',
-        svId: 'sv1',
-        chr: 'chr1',
-        pos: '1000',
-        alt: 'A',
-      },
-      {
-        genome: 'hg38',
-        batchId: 'batch1',
-        svId: 'sv1',
-        chr: 'chr1',
-        pos: '1000',
-        alt: 'A',
-      },
-      {
-        genome: 'hg38',
-        batchId: 'batch1',
-        svId: 'sv1',
-        chr: 'chr1',
-        pos: '1000',
-        alt: 'A',
-      },
-      {
-        genome: 'hg38',
-        batchId: 'batch1',
-        svId: 'sv1',
-        chr: 'chr1',
-        pos: '1000',
-        alt: 'A',
-      },
-      {
-        genome: 'hg38',
-        batchId: 'batch1',
-        svId: 'sv1',
-        chr: 'chr1',
-        pos: '1000',
-        alt: 'A',
-      },
-      {
-        genome: 'hg38',
-        batchId: 'batch1',
-        svId: 'sv1',
-        chr: 'chr1',
-        pos: '1000',
-        alt: 'A',
-      },
-      {
-        genome: 'hg38',
-        batchId: 'batch1',
-        svId: 'sv1',
-        chr: 'chr1',
-        pos: '1000',
-        alt: 'A',
-      },
-      {
-        genome: 'hg38',
-        batchId: 'batch1',
-        svId: 'sv1',
-        chr: 'chr1',
-        pos: '1000',
-        alt: 'A',
-      }],
-      tableData2: [
-        {
-          time: '2022-10-11 10:00:00',
-          address: 'xx研究所',
-          typeInfo: 'xinxi1',
-          sampleInfo: 'xinxi2',
-          result: 'RNA',
-        },
-        {
-          time: '2022-10-11 10:00:00',
-          address: 'xx研究所',
-          typeInfo: 'xinxi1',
-          sampleInfo: 'xinxi2',
-          result: 'RNA',
-        },
-        {
-          time: '2022-10-11 10:00:00',
-          address: 'xx研究所',
-          typeInfo: 'xinxi1',
-          sampleInfo: 'xinxi2',
-          result: 'RNA',
-        },
-        {
-          time: '2022-10-11 10:00:00',
-          address: 'xx研究所',
-          typeInfo: 'xinxi1',
-          sampleInfo: 'xinxi2',
-          result: 'RNA',
-        },
-        {
-          time: '2022-10-11 10:00:00',
-          address: 'xx研究所',
-          typeInfo: 'xinxi1',
-          sampleInfo: 'xinxi2',
-          result: 'RNA',
-        },
-        {
-          time: '2022-10-11 10:00:00',
-          address: 'xx研究所',
-          typeInfo: 'xinxi1',
-          sampleInfo: 'xinxi2',
-          result: 'RNA',
-        },
-        {
-          time: '2022-10-11 10:00:00',
-          address: 'xx研究所',
-          typeInfo: 'xinxi1',
-          sampleInfo: 'xinxi2',
-          result: 'RNA',
-        },
+      genome: 2022021721004,
+      genomeList: [],
+      chr: '',
+      chrList: [],
+      chrListTemp: [], // 中间变量数组
+      start: '',
+      end: '',
 
-      ],
-      input3: '',
-      value1: '',
-      options1: [{
-        value: '大黄鱼',
-        label: '大黄鱼',
-      }, {
-        value: '大黄鱼2',
-        label: '大黄鱼2',
-      }, {
-        value: '大黄鱼3',
-        label: '大黄鱼3',
-      }],
-      value2: '',
-      options2: [{
-        value: '所有',
-        label: '所有',
-      }, {
-        value: '特定种类',
-        label: '特定种类',
-      }, {
-        value: '特定基因',
-        label: '特定基因',
-      }],
-      src: 'https://cdn.pixabay.com/photo/2022/03/25/12/17/dna-7090994_640.jpg',
     };
   },
-  mounted() {},
-  methods: {},
+  watch: {
+    genome: {
+      handler(newValue) {
+        this.getGenomeChrList(newValue);
+      },
+      immediate: true,
+    },
+  },
+  mounted() {
+    this.getGenome();
+    this.getPageList();
+  },
+  methods: {
+    // 获取基因组列表
+    getGenome() {
+      GenomeApi.list().then((res) => {
+        this.genomeList = res.data.data;
+      });
+    },
+    // 根据基因组染色体列表
+    getGenomeChrList(genomeId) {
+      GenomeApi.getGenomeChrList(genomeId).then((res) => {
+        this.chrListTemp = res.data.data.map((item) => ({
+          label: item,
+          value: item,
+        }));
+      });
+    },
+    // 获取pageList
+    getPageList() {
+      this.tableLoading = true;
+      const params = {
+        // genomeVersionID: this.genome,
+        // chrID: this.chr || null,
+        // start: this.start || null,
+        // end: this.end || null,
+        page: this.pageInfo.pageNum,
+      };
+      VariationApi.svAllList(params).then((res) => {
+        const { data } = res.data;
+        this.tableData = data.GenomeSvInfos;
+        this.pageInfo.total = data.Total;
+        this.tableLoading = false;
+      });
+    },
+    // 当前页改变时
+    handleCurrentChange(val) {
+      this.pageInfo.pageNum = val;
+      this.getPageList();
+    },
+  },
 };
 </script>
 
@@ -310,65 +200,33 @@ export default {
     color: #18BAE5;
   }
 
-  .gene-wrap {
-    display: flex;
-    gap: 16px;
-
-    &>div {
-      flex: 1;
-      min-height: 500px;
-      padding: 14px;
-    }
-
-    .info {
-      .content-wrap {
-        width: 100%;
-        height: calc(100% - 40px);
-        .chart-bar {
-          height: calc(100% - 20px);
-        }
-      }
-
-      .base-info {
-        margin-top: 16px;
-        display: flex;
-        justify-content: space-between;
-        color: #555;
-
-        strong {
-          color: #3485FB;
-        }
-      }
-    }
-
-    .search {
-      .content-wrap {
-        margin-top: 16px;
-      }
-    }
-  }
-
   .batch {
     margin: 16px 0;
-    height: 500px;
     padding: 16px;
+    overflow: hidden;
 
     .content-wrap {
-      width: calc(100% - 16px);
-      height: calc(100% - 32px);
       padding: 12px 0;
-      box-sizing: border-box;
 
       .search-wrap {
         .el-input {
-          width: 500px;
+          width: 180px;
         }
 
-        &>div:not(:last-child) {
+        .el-button {
+          margin-left: 24px;
+        }
+
+        &>div:not(.el-input) {
           margin-right: 24px;
         }
       }
     }
+  }
+
+  .el-pagination {
+    float: right;
+    margin-top: 16px;
   }
 }
 </style>

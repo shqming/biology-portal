@@ -14,6 +14,7 @@
       menu-trigger="click"
       router
       unique-opened
+      @select="(index) => { activeIndex = index }"
     >
       <el-menu-item index="/home">首页</el-menu-item>
       <el-submenu index="genome">
@@ -29,11 +30,8 @@
       <el-submenu index="tools">
         <template slot="title">工具</template>
         <el-menu-item index="" @click="open('http://124.71.211.200/index.html')">基因浏览器</el-menu-item>
-        <el-menu-item index="/home/onlineUse">在线使用</el-menu-item>
         <el-menu-item index="" @click="open('http://124.71.211.200:4567/')">序列比对</el-menu-item>
-        <el-menu-item index="/home/tools-4">选项4</el-menu-item>
-        <el-menu-item index="/home/tools-5">选项5</el-menu-item>
-        <el-menu-item index="/home/tools-6">选项6</el-menu-item>
+        <el-menu-item index="/home/onlineUse">在线使用(测试中)</el-menu-item>
       </el-submenu>
       <el-menu-item index="/home/molecularMarker">分子标记</el-menu-item>
       <el-menu-item index="/home/download">下载</el-menu-item>
@@ -59,11 +57,12 @@ export default {
     this.getGenome();
   },
   watch: {
-    // $route(to) {
-    //   console.log('开始');
-    //   this.activeIndex = to.path;
-    //   if (to.path.indexOf('/gene/')) this.activeIndex = '/home/gene';
-    // },
+    $route(to) {
+      if (to.fullPath.indexOf('/gene?') > -1) {
+        console.log('true');
+        this.activeIndex = '/home/gene';
+      }
+    },
   },
   methods: {
     getGenome() {

@@ -6,19 +6,17 @@
       </el-carousel-item>
     </el-carousel>
     <div class="search-wrap">
-      <el-select
-        v-model="select"
-        placeholder="请选择"
-      >
+      <span>基因组： </span>
+      <el-select v-model="genomeID" filterable clearable size="medium" placeholder="请选择">
         <el-option
-          v-for="item in selection"
-          :key="item"
-          :label="item"
-          :value="item"
-        ></el-option>
+          v-for="item in genomeList"
+          :key="item.gnome_version_id"
+          :label="item.gnome_species_name"
+          :value="item.gnome_version_id">
+        </el-option>
       </el-select>
-      <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-        <el-button slot="append" icon="el-icon-search">搜索</el-button>
+      <el-input placeholder="请输入内容" v-model="geneName" class="input-with-select">
+        <el-button slot="append" icon="el-icon-search" @click="jump">搜索</el-button>
       </el-input>
     </div>
     <div class="content-box">
@@ -31,15 +29,19 @@
         <p>养殖规模不断扩大，已形成巨大的养殖规模，成为中国最大宗单一海水养殖鱼类，2020年养殖总量25.40万吨，养殖产量居海水养殖鱼类首位。</p>
       </div>
       <div class="section2">
-        <img src="../assets/images/区域2.jpg" width="100%" height="100%">
+        <el-image
+          style="width: 100%; height: 100%"
+          :src="imgSrc"
+          :preview-src-list="[imgSrc]"
+        >
+        </el-image>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue';
+import GenomeApi from '@/api/genome';
 
 export default {
   name: 'Home',
@@ -51,16 +53,35 @@ export default {
         'https://cdn.pixabay.com/photo/2015/03/21/10/26/environmental-protection-683437_1280.jpg',
         'https://cdn.pixabay.com/photo/2018/09/06/18/49/bacteria-3658992_1280.jpg',
       ],
-      select: '',
-      input3: '',
-      selection: ['选项1', '选项2', '选项3'],
+      imgSrc: require('../assets/images/区域2.jpg'),
+      genomeID: '',
+      genomeList: [],
+      geneName: '',
     };
   },
   components: {
   },
-  mounted() {},
+  mounted() {
+    this.getGenome();
+  },
 
   methods: {
+    // 获取基因组列表
+    getGenome() {
+      GenomeApi.list().then((res) => {
+        this.genomeList = res.data.data;
+      });
+    },
+    // 跳转到基因
+    jump() {
+      this.$router.push({
+        path: 'home/gene',
+        query: {
+          genomeID: this.genomeID,
+          geneName: this.geneName,
+        },
+      });
+    },
   },
 };
 </script>
