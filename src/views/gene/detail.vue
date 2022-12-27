@@ -9,7 +9,7 @@
         <div class="content-title">
           {{ activeItem.contenTtitle }}
         </div>
-        <component :is="activeItem.component" />
+        <component :is="activeItem.component" :ids="itemInfo"/>
       </div>
     </div>
   </div>
@@ -41,11 +41,7 @@ export default {
     return {
       items: [
         {
-          title: '信息',
-          icon: 'document-copy',
-          contenTtitle: '基本信息',
-          component: 'info',
-          active: true,
+          title: '信息', icon: 'document-copy', contenTtitle: '基本信息', component: 'info', active: true,
         },
         {
           title: '序列', icon: 's-unfold', contenTtitle: '相关序列', component: 'sequence',
@@ -54,13 +50,18 @@ export default {
           title: '结构', icon: 'c-scale-to-original', contenTtitle: '基因结构', component: 'structure',
         },
         {
-          title: '注解', icon: 'warning', contenTtitle: '基因变异', component: 'annotation',
+          title: '注解', icon: 'warning', contenTtitle: '基因注解', component: 'annotation',
         },
         {
           title: '论文', icon: 's-data', contenTtitle: '基因论文', component: 'paper',
         },
       ],
       activeItem: '',
+      itemInfo: {
+        genomeVersionID: null,
+        genomeGeneID: null,
+        geneID: null,
+      },
     };
   },
 
@@ -68,7 +69,13 @@ export default {
 
   watch: {},
 
-  mounted() {},
+  mounted() {
+    this.itemInfo = {
+      genomeVersionID: this.$route.query.genomeVersionID,
+      genomeGeneID: this.$route.query.genomeGeneID,
+      geneID: this.$route.query.geneID,
+    };
+  },
 
   methods: {
     check(item) {
@@ -94,7 +101,7 @@ export default {
   }
 
   .content-wrap {
-    margin-top: 16px;
+    margin: 16px 0;
     display: flex;
     gap: 20px;
 

@@ -2,10 +2,6 @@ import HttpService from './httpService';
 
 const baseUrl = 'gene';
 
-// http://124.71.211.200:8084/v1/gene/allList?page=2
-
-// http://124.71.211.200:8084/v1/gene/search?genomeVersionID=2022021721001&geneName=LR75A&page=1
-
 export default class Gene {
   // 分页查询基因的所有列表
   static allList(params) {
@@ -22,6 +18,56 @@ export default class Gene {
     const config = {
       method: 'GET',
       url: `${baseUrl}/search`,
+      params,
+    };
+    return HttpService.request(config);
+  }
+
+  // 查询某基因简要信息
+  static information(params) {
+    const config = {
+      method: 'GET',
+      url: `${baseUrl}/annotation/information`,
+      params,
+    };
+    return HttpService.request(config);
+  }
+
+  // 查询基因序列
+  static sequences(params) {
+    const config = {
+      method: 'GET',
+      url: `${baseUrl}/annotation/sequences`,
+      params,
+    };
+    return HttpService.request(config);
+  }
+
+  // 查询基因外显子结构
+  static structure(params) {
+    const config = {
+      method: 'GET',
+      url: `${baseUrl}/annotation/structure`,
+      params,
+    };
+    return HttpService.request(config);
+  }
+
+  // 查询基因注释连接
+  static annotation(params) {
+    const config = {
+      method: 'GET',
+      url: `${baseUrl}/annotation/annotation`,
+      params,
+    };
+    return HttpService.request(config);
+  }
+
+  // 查询基因文章信息
+  static articles(params) {
+    const config = {
+      method: 'GET',
+      url: `${baseUrl}/annotation/articles`,
       params,
     };
     return HttpService.request(config);

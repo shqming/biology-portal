@@ -35,10 +35,6 @@
           :header-cell-style="{ 'background-color': '#f8f8f9' }"
         >
           <el-table-column
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
             prop="maker_id"
             label="makerId"
           >
