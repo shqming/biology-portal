@@ -1,27 +1,25 @@
 <template>
   <div class="profile-container">
     <div class="img-container">
-      <img src="~@/assets/images/member1.jpg" alt="profile image" />
+      <img :src="info.avatar" object-fit="contain" alt="profile image" />
     </div>
-    <div class="info full-name">沈俱秦</div>
+    <div class="info full-name">{{ info.name }}</div>
     <div class="info role">
       <i class="iconfont icon-position"></i>
-      <span class="identity">香港大学生物学教授</span>
+      <span class="identity">{{ info.identity }}</span>
     </div>
     <div class="info detail">
       <i class="iconfont icon-jianjie"></i>
-      <span>细胞信号传导通路中的酪氨酸去磷酸化酶的研究及药物筛选；
-        承担本科生“膜的分子生物学”和研究生的“高级生物化学与分子”课
-      </span>
+      <span>{{ info.introduction }}</span>
     </div>
     <div class="social-container">
       <div class="contact">
-        <i class="iconfont icon-ziyuan"></i>
-        <span>12333333</span>
+        <i class="el-icon-s-home"></i>
+        <a :href="info.url" target="_blank">{{ info.urlName }}</a>
       </div>
       <div class="contact">
         <i class="iconfont icon-mail_fill"></i>
-        <span>123@163.com</span>
+        <span>{{ info.email }}</span>
       </div>
     </div>
   </div>
@@ -30,6 +28,12 @@
 <script>
 export default {
   name: '',
+  props: {
+    info: {
+      type: Object,
+      default: () => {},
+    },
+  },
   data() {
     return {};
   },
@@ -44,8 +48,8 @@ export default {
   position: relative;
   background-color: #fff;
   box-sizing: border-box;
-  width: 230px;
-  height: 300px;
+  width: 320px;
+  height: 400px;
   padding: 90px 16px 20px;
   border-radius: 12px;
   box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.2);
@@ -73,7 +77,7 @@ export default {
 
     img {
       width: 100%;
-      max-width: 100%;
+      object-fit: cover;
       transform: scale(1.1);
     }
   }
@@ -107,11 +111,16 @@ export default {
     display: flex;
     width: 100%;
     justify-content: space-between;
+    align-items: center;
     color: #777;
     font-size: 0.8em;
 
     i {
       margin-right: 3px;
+
+      &.el-icon-s-home {
+        font-size: 16px;
+      }
     }
   }
 }

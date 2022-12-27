@@ -17,10 +17,10 @@
             <i class="iconfont icon-pingtaixinxi" />
           </div>
           <div class="item">
-            建设单位：集美生物创新研究院
+            建设单位：集美大学水产学院
           </div>
           <div class="item">
-            技术支持：集美大学生物研究所
+            技术支持：集美大学鱼类遗传育种实验室
           </div>
         </div>
         <div class="center">
