@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import GenomeApi from '@/api/genome';
+import { mapState } from 'vuex';
 
 export default {
   name: 'Home',
@@ -55,23 +55,17 @@ export default {
       ],
       imgSrc: require('../assets/images/区域2.jpg'),
       genomeID: '',
-      genomeList: [],
       geneName: '',
     };
   },
   components: {
   },
-  mounted() {
-    this.getGenome();
+  computed: {
+    ...mapState(['genomeList']),
   },
-
+  mounted() {
+  },
   methods: {
-    // 获取基因组列表
-    getGenome() {
-      GenomeApi.list().then((res) => {
-        this.genomeList = res.data.data;
-      });
-    },
     // 跳转到基因
     jump() {
       this.$router.push({

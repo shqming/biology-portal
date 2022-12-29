@@ -20,7 +20,7 @@
       <el-submenu index="genome">
         <template slot="title">基因组</template>
         <el-menu-item
-          v-for="item in genome"
+          v-for="item in genomeList"
           :key="item.gnome_version_id"
           :index="`/home/genome/${item.gnome_version_id}`"
         >{{ item.gnome_species_name }}</el-menu-item>
@@ -42,19 +42,19 @@
 </template>
 
 <script>
-import GenomeApi from '@/api/genome';
+import { mapState } from 'vuex';
 
 export default {
   name: '',
   data() {
     return {
       activeIndex: '/home',
-      genome: [],
     };
   },
-  components: {},
-  mounted() {
-    this.getGenome();
+  components: {
+  },
+  computed: {
+    ...mapState(['genomeList']),
   },
   watch: {
     $route(to) {
@@ -64,11 +64,13 @@ export default {
       }
     },
   },
+  mounted() {
+    this.getGenome();
+  },
   methods: {
+    // 获取基因组列表
     getGenome() {
-      GenomeApi.list().then((res) => {
-        this.genome = res.data.data;
-      });
+      this.$store.dispatch('getGenomeList');
     },
     open(item) {
       window.open(item);

@@ -15,8 +15,13 @@
         >
           <el-table-column
             prop="gnome_version_id"
-            label="gnomeVersionId"
+            label="gnome"
           >
+            <template slot-scope="{ row }">
+              <span>
+                {{ row.gnome_version_id | getGenomeName }}
+              </span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="gnome_sr_url"
@@ -26,7 +31,7 @@
             <template slot-scope="{ row }">
               <span v-if="row.gnome_sr_url == 0">暂无数据</span>
               <el-button v-else @click="download(row.gnome_sr_url)" type="text">
-                {{ row.gnome_sr_url }}
+                {{ row.gnome_sr_url | formatUrl }}
               </el-button>
             </template>
           </el-table-column>
@@ -38,7 +43,7 @@
             <template slot-scope="{ row }">
               <span v-if="row.gnome_gff_url == 0">暂无数据</span>
               <el-button v-else @click="download(row.gnome_gff_url)" type="text">
-                {{ row.gnome_gff_url }}
+                {{ row.gnome_gff_url | formatUrl }}
               </el-button>
             </template>
           </el-table-column>
@@ -50,7 +55,7 @@
             <template slot-scope="{ row }">
               <span v-if="row.gnome_gtf_url == 0">暂无数据</span>
               <el-button v-else @click="download(row.gnome_gtf_url)" type="text">
-                {{ row.gnome_gtf_url }}
+                {{ row.gnome_gtf_url| formatUrl }}
               </el-button>
             </template>
           </el-table-column>
@@ -62,7 +67,7 @@
             <template slot-scope="{ row }">
               <span v-if="row.gnome_gene_url == 0">暂无数据</span>
               <el-button v-else @click="download(row.gnome_gene_url)" type="text">
-                {{ row.gnome_gene_url }}
+                {{ row.gnome_gene_url | formatUrl }}
               </el-button>
             </template>
           </el-table-column>
@@ -74,7 +79,7 @@
             <template slot-scope="{ row }">
               <span v-if="row.gnome_cds_url == 0">暂无数据</span>
               <el-button v-else @click="download(row.gnome_cds_url)" type="text">
-                {{ row.gnome_cds_url }}
+                {{ row.gnome_cds_url | formatUrl }}
               </el-button>
             </template>
           </el-table-column>
@@ -86,7 +91,7 @@
             <template slot-scope="{ row }">
               <span v-if="row.gnome_pep_url == 0">暂无数据</span>
               <el-button v-else @click="download(row.gnome_pep_url)" type="text">
-                {{ row.gnome_pep_url }}
+                {{ row.gnome_pep_url | formatUrl }}
               </el-button>
             </template>
           </el-table-column>
@@ -131,6 +136,13 @@ export default {
   },
 
   computed: {},
+
+  filters: {
+    formatUrl(link) {
+      if (link === '0') return link;
+      return link.split('.').pop();
+    },
+  },
 
   watch: {},
 

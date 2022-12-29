@@ -58,8 +58,13 @@
           </el-table-column>
           <el-table-column
             prop="gnome_version_id"
-            label="GenomeVersionId"
+            label="Genome"
           >
+            <template slot-scope="{ row }">
+              <span>
+                {{ row.gnome_version_id | getGenomeName }}
+              </span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="chr_pos"
@@ -112,6 +117,7 @@
 <script>
 import GenomeApi from '@/api/genome';
 import VariationApi from '@/api/variation';
+import { mapState } from 'vuex';
 
 export default {
   name: 'variation',
@@ -127,7 +133,6 @@ export default {
         pageNum: 1,
       },
       genome: 2022021721004,
-      genomeList: [],
       chr: '',
       chrList: [],
       chrListTemp: [], // 中间变量数组
@@ -135,6 +140,9 @@ export default {
       end: '',
 
     };
+  },
+  computed: {
+    ...mapState(['genomeList']),
   },
   watch: {
     genome: {
@@ -145,16 +153,9 @@ export default {
     },
   },
   mounted() {
-    this.getGenome();
     this.getPageList();
   },
   methods: {
-    // 获取基因组列表
-    getGenome() {
-      GenomeApi.list().then((res) => {
-        this.genomeList = res.data.data;
-      });
-    },
     // 根据基因组染色体列表
     getGenomeChrList(genomeId) {
       GenomeApi.getGenomeChrList(genomeId).then((res) => {

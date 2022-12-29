@@ -46,16 +46,11 @@
           </el-table-column>
           <el-table-column
             prop="gnome_version_id"
-            label="gnomeVersionId"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="maker_type_id"
-            label="makerTypeId"
+            label="gnome"
           >
             <template slot-scope="{ row }">
-              <span style="color: #9B58FE">
-                {{ row.maker_type_id }}
+              <span>
+                {{ row.gnome_version_id | getGenomeName }}
               </span>
             </template>
           </el-table-column>
@@ -105,7 +100,7 @@
 
 <script>
 import MolecularMarkerApi from '@/api/molecularMarker';
-import GenomeApi from '@/api/genome';
+import { mapState } from 'vuex';
 
 export default {
   name: 'MolecularMarker',
@@ -124,13 +119,14 @@ export default {
         pageNum: 1,
       },
       genomeid: 2022021721004,
-      genomeList: [],
       typeID: '',
       typeList: [],
     };
   },
 
-  computed: {},
+  computed: {
+    ...mapState(['genomeList']),
+  },
 
   watch: {
     genomeid: {
@@ -142,17 +138,10 @@ export default {
   },
 
   mounted() {
-    this.getGenome();
     this.getPageList();
   },
 
   methods: {
-    // 获取基因组列表
-    getGenome() {
-      GenomeApi.list().then((res) => {
-        this.genomeList = res.data.data;
-      });
-    },
     // 根据基因组id获取分子标记类型列表
     getTypeList(genomeId) {
       MolecularMarkerApi.getTypeList(genomeId).then((res) => {

@@ -54,8 +54,13 @@
             </el-table-column>
             <el-table-column
               prop="gnome_version_id"
-              label="GnomeVersionId"
+              label="Gnome"
             >
+              <template slot-scope="{ row }">
+                <span>
+                  {{ row.gnome_version_id | getGenomeName }}
+                </span>
+              </template>
             </el-table-column>
             <el-table-column
               prop="gnome_chr_id"
@@ -82,8 +87,8 @@
 </template>
 
 <script>
-import GenomeApi from '@/api/genome';
 import GeneApi from '@/api/gene';
+import { mapState } from 'vuex';
 
 const shortid = require('shortid');
 
@@ -104,12 +109,13 @@ export default {
         pageNum: 1,
       },
       genomeID: 2022021721001,
-      genomeList: [],
       geneName: '',
     };
   },
 
-  computed: {},
+  computed: {
+    ...mapState(['genomeList']),
+  },
 
   watch: {},
 
@@ -117,7 +123,6 @@ export default {
     const { genomeID, geneName } = this.$route.query;
     this.genomeID = genomeID ? Number(genomeID) : '';
     this.geneName = geneName || '';
-    this.getGenome();
     this.getPageList();
   },
 
@@ -163,12 +168,6 @@ export default {
         this.pageInfo.total = 0;
         this.pageInfo.pageNum = 1;
       }
-    },
-    // 获取基因组列表
-    getGenome() {
-      GenomeApi.list().then((res) => {
-        this.genomeList = res.data.data;
-      });
     },
     // 当前页改变时
     handleCurrentChange(val) {
