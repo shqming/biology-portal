@@ -15,7 +15,7 @@
           :value="item.gnome_version_id">
         </el-option>
       </el-select>
-      <el-input placeholder="请输入内容" v-model="geneName" class="input-with-select">
+      <el-input placeholder="请输入基因名" v-model="geneName" class="input-with-select">
         <el-button slot="append" icon="el-icon-search" @click="jump">搜索</el-button>
       </el-input>
     </div>

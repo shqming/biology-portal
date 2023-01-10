@@ -21,32 +21,23 @@
         border
         :labelStyle="{ width: '370px' }"
       >
-        <el-descriptions-item label="参考序列">
-          GCA_000003025.6(Sscrofa11.1)
-        </el-descriptions-item>
-        <el-descriptions-item label="缩写">
-          科学与技术中心
+        <el-descriptions-item label="英文全称">
+          {{ data.gnome_article_DOI }}
         </el-descriptions-item>
         <el-descriptions-item label="基因组大小">
-          {{ data.gnome_size }} 字节
+          {{ data.gnome_size }}
         </el-descriptions-item>
-        <el-descriptions-item label="基因编号">
+        <el-descriptions-item label="基因数目">
           {{ data.gnome_gene_num }}
         </el-descriptions-item>
         <el-descriptions-item label="染色体数目">
-          20
+          33872
         </el-descriptions-item>
-        <el-descriptions-item label="脚手架数量">
-          705
-        </el-descriptions-item>
-        <el-descriptions-item label="重叠群N50">
-          {{ data.gnome_contig_N50 }} 字节
-        </el-descriptions-item>
-        <el-descriptions-item label="脚手架N50">
-          88.2 兆字节
+        <el-descriptions-item label="contigN50">
+          {{ data.gnome_contig_N50 }}
         </el-descriptions-item>
         <el-descriptions-item label="GC百分比">
-          41.5
+          41.5%
         </el-descriptions-item>
         <el-descriptions-item label="布斯科">
           C:98.2%[S:97.7%,D:0.5%],F:0.3%,M:1.6%

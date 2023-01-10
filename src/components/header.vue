@@ -29,7 +29,7 @@
       <el-menu-item index="/home/variation">变异</el-menu-item>
       <el-submenu index="tools">
         <template slot="title">工具</template>
-        <el-menu-item index="" @click="open('http://124.71.211.200/index.html')">基因浏览器</el-menu-item>
+        <el-menu-item index="#" @click="open('http://124.71.211.200/index.html')">基因浏览器</el-menu-item>
         <el-menu-item index="" @click="open('http://124.71.211.200:4567/')">序列比对</el-menu-item>
         <el-menu-item index="/home/onlineUse">在线使用(测试中)</el-menu-item>
       </el-submenu>
